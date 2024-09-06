@@ -13,6 +13,7 @@ public class ItemPedido {
     int quantidade;
     int preco;
 
+    //sobrescrevendo um metodo
     @Override
     public String toString() {
         return "\n ID Produto: "+ produto.getId()  + "\n Nome: "+ produto.getNome() + "\n Valor " + produto.getValor() + "\n Quantidade: " + quantidade;

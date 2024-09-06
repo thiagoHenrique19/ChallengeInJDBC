@@ -10,6 +10,7 @@ import org.DesafioJDBC.produto.view.CriaConexao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class PedidoService implements ListarPedido {
@@ -63,11 +64,7 @@ public class PedidoService implements ListarPedido {
                 Cliente cliente = buscarClientePorId(idCliente);
                 List<ItemPedido> itens = buscarItensPedidosPorIdPedido(idPedido);
 
-                Pedido pedido = Pedido
-                        .builder()
-                        .cliente(cliente)
-                        .itensPedidos(itens)
-                        .build();
+                Pedido pedido = Pedido.builder().cliente(cliente).itensPedidos(itens).build();
 
                 pedidos.add(pedido);
             }
@@ -109,7 +106,7 @@ public class PedidoService implements ListarPedido {
         String sql = "SELECT * FROM ItemPedido WHERE idPedido = ?";
 
         List<ItemPedido> itensPedidos = new ArrayList<>();
-        ProdutoService produtoService = new ProdutoService(CriaConexao.getConexao());
+        ProdutoService produtoService = new ProdutoService(connection);
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
@@ -142,8 +139,7 @@ public class PedidoService implements ListarPedido {
         String sql = "SELECT * FROM Pedido p WHERE p.idPedido = ?";
 
         Pedido pedido = new Pedido();
-        ItemPedidoService itemPedidoService = new ItemPedidoService(CriaConexao.getConexao());
-        ClienteService clienteService = new ClienteService(CriaConexao.getConexao());
+        ClienteService clienteService = new ClienteService(connection);
 
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -194,18 +190,10 @@ public class PedidoService implements ListarPedido {
     public int buscarUltimoIdPedido() throws SQLException {
 
         String sql = "SELECT max(idPedido) FROM pedido";
-        ItemPedidoService itemPedidoService = new ItemPedidoService(CriaConexao.getConexao());
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
-                int idPedido = rs.getInt(1);
-                Pedido pedidoById = getPedidoPorId(idPedido);
-                List<ItemPedido> itens = itemPedidoService.getItemPedidoByIdPedido(idPedido);
-                pedidoById.setItensPedidos(itens);
-
-                System.out.println("Dados do ultimo Pedido encontrado: " + pedidoById);
-                return idPedido;
+                return rs.getInt(1);
             }
             System.out.println("Nenhum pedido encontrado na tabela.");
         } catch (SQLException e) {
@@ -215,13 +203,15 @@ public class PedidoService implements ListarPedido {
         return 0;
     }
 
-    public static void criarPedidoV2(Scanner terminal) throws SQLException {
+    public void criarPedidoV2() throws SQLException {
+        Scanner terminal = new Scanner(System.in);
         // Inicializando serviços de conexão
-        Connection conection = CriaConexao.getConexao();
-        PedidoService pedidoService = new PedidoService(conection);
-        ItemPedidoService itemPedidoService = new ItemPedidoService(conection);
-        ProdutoService produtoService = new ProdutoService(conection); // Serviço para buscar produtos
-        ClienteService clienteService = new ClienteService(conection);
+        PedidoService pedidoService = new PedidoService(connection);
+        ItemPedidoService itemPedidoService = new ItemPedidoService(connection);
+        ProdutoService produtoService = new ProdutoService(connection);
+        ClienteService clienteService = new ClienteService(connection);
+
+        clienteService.getAllClientes();
 
         // Solicitar o id do cliente
         System.out.println("Informe o id do cliente que deseja fazer um pedido:");
@@ -229,29 +219,37 @@ public class PedidoService implements ListarPedido {
         Cliente cliente = clienteService.getClienteById(idCliente);
         terminal.nextLine();  // Consumir a nova linha
 
-        Pedido newPedido = Pedido
-                .builder()
-                .cliente(cliente)
-                .build();
+        Pedido newPedido = Pedido.builder().cliente(cliente).build();
 
-        // Inserir o novo pedido no banco
-        pedidoService.createPedido(newPedido);
-        System.out.println("Pedido criado com sucesso!");
+        int id = pedidoService.createPedido(newPedido);
+        newPedido.setId(id);
 
-        // Listar todos os produtos disponíveis para escolha
-        System.out.println("Produtos disponíveis:");
-        List<Produto> produtos = produtoService.getAllProdutos(); // Método para obter todos os produtos
+        System.out.println("╔════════════════════════════════════════════════════╗");
+        System.out.println("║                 Produtos Disponíveis               ║");
+        System.out.println("╠════════════════════════════════════════════════════╣");
+
+        List<Produto> produtos = produtoService.getAllProdutos();
+
         for (Produto produto : produtos) {
-            System.out.printf("ID: %d - Nome: %s - Preço: %.2f%n", produto.getId(), produto.getNome(), produto.getValor());
+            System.out.printf("║ ID: %02d - Nome: %-14s - Preço: R$ %-8.2f ║%n",
+                    produto.getId(),
+                    produto.getNome(),
+                    produto.getValor());
         }
-        // Adicionar itens ao pedido
+
+        System.out.println("╚════════════════════════════════════════════════════╝");
+
         List<ItemPedido> itensPedidos = new ArrayList<>();
-        while (true) {
-            System.out.println("Informe o ID do produto que deseja adicionar ou digite 0 para finalizar:");
+        boolean verificarSeDesejaContinuar = true;
+        while (verificarSeDesejaContinuar) {
+            System.out.println("Informe o ID do produto que voce deseja para fazer o pedido:");
             int idProduto = terminal.nextInt();
-            if (idProduto == 0) {
-                break;
+
+            while (idProduto == 0) {
+                System.out.println("O ID 0 é inválido, tente novamente");
+                idProduto = terminal.nextInt();
             }
+
             Produto produtoSelecionado = produtoService.buscarProdutoPorId(idProduto);
             if (produtoSelecionado == null) {
                 System.out.println("Produto não encontrado. Tente novamente.");
@@ -260,25 +258,34 @@ public class PedidoService implements ListarPedido {
             System.out.println("Informe a quantidade do produto:");
             int quantidade = terminal.nextInt();
 
-            ItemPedido itemPedido = ItemPedido
-                    .builder()
-                    .produto(produtoSelecionado)
-                    .quantidade(quantidade)
-                    .build();
+            while (quantidade == 0) {
+                System.out.println("A quantidade é inválida, tente novamente");
+                quantidade = terminal.nextInt();
+            }
+
+            ItemPedido itemPedido = ItemPedido.builder().produto(produtoSelecionado).quantidade(quantidade).build();
 
             itensPedidos.add(itemPedido);
             System.out.println("Item adicionado com sucesso!");
+            System.out.println("Deseja adicionar mais produtos? (s/n)");
+            String escolha = terminal.next();
+            if (escolha.equalsIgnoreCase("n")) {
+                verificarSeDesejaContinuar = false;
+            } else if (!(escolha.equalsIgnoreCase("s"))) {
+                System.out.println("Utilize s/n por gentileza");
+            }
         }
         float total = 0;
         for (ItemPedido itemPedido : itensPedidos) {
-            Produto produto = produtoService.buscarProdutoPorId(itemPedido.getProduto().getId());
-            total += produto.getValor() * itemPedido.getQuantidade();
+            if (itemPedido.getProduto().getId() != 0) {
+                Produto produto = produtoService.buscarProdutoPorId(itemPedido.getProduto().getId());
+                total += produto.getValor() * itemPedido.getQuantidade();
+            }
         }
+
         newPedido.setItensPedidos(itensPedidos);
         newPedido.setTotal(total);
-
-        itemPedidoService.inserirItensPedido(itensPedidos);
-
+        itemPedidoService.inserirItensPedido(itensPedidos, newPedido);
         System.out.println("Pedido finalizado com sucesso! Total: " + total);
     }
 
@@ -286,25 +293,17 @@ public class PedidoService implements ListarPedido {
         String sql = "SELECT * FROM Pedido";
         List<Pedido> pedidos = new ArrayList<>();
 
-        ClienteService clienteService = new ClienteService(CriaConexao.getConexao());
-        PedidoService pedidoService = new PedidoService(CriaConexao.getConexao());
+        ClienteService clienteService = new ClienteService(connection);
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 int idPedido = rs.getInt("idPedido");
                 int idCliente = rs.getInt("idCliente");
 
                 Cliente cliente = clienteService.getClienteById(idCliente);
-                Pedido pedidoo = pedidoService.getPedidoPorId(idPedido);
 
-                // Corrigido para definir corretamente os atributos do pedido
-                Pedido pedido = Pedido
-                        .builder()
-                        .id(idPedido) // Define o ID do pedido
-                        .cliente(cliente) // Define o ID do cliente
-                        .build();
+                Pedido pedido = Pedido.builder().id(idPedido).cliente(cliente).build();
 
                 pedidos.add(pedido);
             }
@@ -321,28 +320,93 @@ public class PedidoService implements ListarPedido {
         if (pedidos.isEmpty()) {
             System.out.println("Nenhum pedido foi encontrado.");
         } else {
-            System.out.println("Lista de todos os pedidos:");
+            // Exibe todos os pedidos
+            String bordaSuperior = "╔════════════════════════════════════════════════════════════════╗";
+            String bordaInferior = "╚════════════════════════════════════════════════════════════════╝";
+            String divisoria = "╠════════════════════════════════════════════════════════════════╣";
+
+            System.out.println(bordaSuperior);
+            System.out.println("║                       Lista de Pedidos                         ║");
             for (Pedido pedido : pedidos) {
-                // Corrigido para exibir o ID do pedido e o ID do cliente corretamente
-                System.out.printf("\n ID Pedido: %d | ID Cliente: %d | Nome %s ",
-                        pedido.getId(), pedido.getCliente().getId(), pedido.getCliente().getNome());
+
+                System.out.println(divisoria);
+                System.out.printf("║ ID Pedido: %-5d |ID Cliente: %-5d |Nome: %-20s║%n",
+                        pedido.getId(),
+                        pedido.getCliente().getId(),
+                        pedido.getCliente().getNome());
+            }
+            System.out.print(bordaInferior);
+
+            System.out.println("\nDeseja ver os dados de um pedido específico? (s/n)");
+            String resposta = terminal.nextLine().trim().toLowerCase();
+
+            if (resposta.equals("s")) {
+                System.out.println("Informe o ID do pedido que deseja ver:");
+                int idPedido = Integer.parseInt(terminal.nextLine());
+
+                Pedido pedidoEspecifico = getPedidoPorId(idPedido);
+
+                if (pedidoEspecifico != null) {
+                    exibirDetalhesPedido(pedidoEspecifico);
+                } else {
+                    System.out.println("Pedido não encontrado.");
+                }
+            } else {
+                System.out.println("o Item pedido não foi encontrado");
             }
         }
     }
+
+    private void exibirDetalhesPedido(Pedido pedido) throws SQLException {
+// Definindo bordas e divisórias com um comprimento uniforme e ajustado
+        String bordaSuperior = "╔══════════════════════════════════════╗";
+        String bordaInferior = "╚══════════════════════════════════════╝";
+        String divisoria = "╠══════════════════════════════════════╣";
+        String divisoriaInterna = "╟──────────────────────────────────────╢";
+
+// Cabeçalho do pedido
+        System.out.println(bordaSuperior);
+        System.out.println("║            Detalhes do Pedido        ║");
+        System.out.println(divisoria);
+
+// Detalhes do pedido
+        System.out.printf("║ ID Pedido:        %-18d ║%n", pedido.getId());
+
+// Instancia o serviço para buscar os itens do pedido
+        ItemPedidoService itemPedidoService = new ItemPedidoService(connection);
+        pedido.setItensPedidos(itemPedidoService.getItemPedidoByIdPedido(pedido.getId()));
+
+// Loop para imprimir os itens do pedido
+        for (ItemPedido item : pedido.getItensPedidos()) {
+            System.out.println(divisoriaInterna); // Divisória interna entre os itens
+            System.out.printf("║ Nome do Produto:  %-18s ║%n", item.getProduto().getNome());
+            System.out.printf("║ Valor do Produto: R$ %-15.2f ║%n", item.getProduto().getValor());
+            System.out.printf("║ Quantidade:       %-18d ║%n", item.getQuantidade());
+        }
+
+// Detalhes do cliente
+        System.out.println(divisoria);
+        System.out.printf("║ ID Cliente:       %-18d ║%n", pedido.getCliente().getId());
+        System.out.printf("║ Nome Cliente:     %-18s ║%n", pedido.getCliente().getNome());
+
+        System.out.println(bordaInferior);
+    }
+
     public void viewPedido(Scanner terminal) throws SQLException {
-        // SQL para buscar o pedido pelo ID
         String sqlPedido = "SELECT * FROM Pedido WHERE idPedido = ?";
 
         String sqlItens = "SELECT idItemPedido FROM ItemPedido WHERE idPedido = ? ";
 
-        ClienteService clienteService = new ClienteService(CriaConexao.getConexao());
-        ItemPedidoService itemPedidoService = new ItemPedidoService(CriaConexao.getConexao());
-        PedidoService pedidoService = new PedidoService(CriaConexao.getConexao());
+        ClienteService clienteService = new ClienteService(connection);
+        ItemPedidoService itemPedidoService = new ItemPedidoService(connection);
+        PedidoService pedidoService = new PedidoService(connection);
 
         int ultimoID = pedidoService.buscarUltimoIdPedido();
+        Pedido pedidoById = getPedidoPorId(ultimoID);
+        List<ItemPedido> itens = itemPedidoService.getItemPedidoByIdPedido(ultimoID);
+        pedidoById.setItensPedidos(itens);
 
-        try (PreparedStatement stmtPedido = connection.prepareStatement(sqlPedido);
-             PreparedStatement stmtItens = connection.prepareStatement(sqlItens)) {
+        try (PreparedStatement stmtPedido = connection.prepareStatement(sqlPedido); PreparedStatement stmtItens = connection.prepareStatement(sqlItens)) {
 
             stmtPedido.setInt(1, ultimoID);
 
@@ -365,20 +429,34 @@ public class PedidoService implements ListarPedido {
                         }
                     }
 
-                    List<ItemPedido> itemPedido = itemPedidoService.getItemPedidoById(idItemPedido);
+                    List<ItemPedido> itemPedidos = itemPedidoService.getItemPedidoById(idItemPedido);
+                    double total = pedidoById.calcularTotal();
 
-                    System.out.println("=====================================");
-                    System.out.println("Detalhes do Pedido:");
-                    System.out.printf("ID Pedido: %d%n", idPedido);
-                    System.out.printf("ID Cliente: %d%n", cliente.getId());
-                    System.out.printf("Nome Cliente: %s%n", cliente.getNome());
-                    System.out.printf("Último ID Item Pedido: %d%n", idItemPedido);
-                    for (ItemPedido pedido : itemPedido) {
-                        System.out.printf("Detalhes do Item: Produto ID: %d, Quantidade: %d%n",
-                                pedido.getId(), pedido.getQuantidade());
+                    String bordaSuperior = "╔═══════════════════════════════════╗";
+                    String bordaInferior = "╚═══════════════════════════════════╝";
+                    String divisoria = "╠═══════════════════════════════════╣";
+                    String divisoriaInterna = "║-----------------------------------║";
+
+                    System.out.println(bordaSuperior);
+                    System.out.println("║        Detalhes do Pedido         ║");
+                    System.out.println(divisoria);
+
+                    System.out.printf("║ ID Pedido:      %-17d ║%n", idPedido);
+                    System.out.printf("║ ID Cliente:     %-17d ║%n", cliente.getId());
+                    System.out.printf("║ Cliente:        %-17s ║%n", cliente.getNome());
+                    System.out.printf("║ ID Item Pedido: %-17d ║%n", idItemPedido);
+
+                    System.out.println(divisoria);
+                    for (ItemPedido itemPedido : itemPedidos) {
+                        System.out.printf("║ Produto ID:     %-17d ║%n", itemPedido.getProduto().getId());
+                        System.out.printf("║ Nome:           %-17s ║%n", itemPedido.getProduto().getNome());
+                        System.out.printf("║ Quantidade:     %-17d ║%n", itemPedido.getQuantidade());
+                        System.out.println(divisoriaInterna); // Divisão interna entre itens
                     }
 
-                    System.out.println("=====================================");
+                    System.out.printf("║ Valor Total:    %-17.2f ║%n", total);
+                    System.out.println(bordaInferior);
+
 
                 } else {
                     System.out.println("Pedido não encontrado com o ID: " + ultimoID);

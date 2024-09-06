@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Produto {
-     int id;
+     Integer id;
      String nome;
      float valor;
 }

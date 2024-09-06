@@ -19,12 +19,12 @@ public class ItemPedidoService {
         this.connection = connection;
     }
 
-    public void inserirItensPedido(List<ItemPedido> pedidosParaInserir) throws SQLException {
-        String sqlItemPedido = "INSERT INTO ItemPedido (IdPedido, IdProduto, Quantidade) VALUES (?, ?, ?)";
+    public void inserirItensPedido(List<ItemPedido> pedidosParaInserir, Pedido pedido) throws SQLException {
+        String sqlItemPedido = "INSERT INTO ItemPedido (Idpedido, IdProduto, Quantidade) VALUES (?, ?, ?)";
 
         try (PreparedStatement stmtItemPedido = connection.prepareStatement(sqlItemPedido)) {
             for (ItemPedido itemPedido : pedidosParaInserir) {
-                stmtItemPedido.setInt(1, itemPedido.getId());
+                stmtItemPedido.setInt(1, pedido.getId());
                 stmtItemPedido.setInt(2, itemPedido.getProduto().getId());
                 stmtItemPedido.setInt(3, itemPedido.getQuantidade());
                 stmtItemPedido.executeUpdate();
@@ -48,9 +48,8 @@ public class ItemPedidoService {
                     int idProduto = rs.getInt("idProduto");
                     int quantidade = rs.getInt("quantidade");
 
-                    ProdutoService produtoService = new ProdutoService(CriaConexao.getConexao());
+                    ProdutoService produtoService = new ProdutoService(connection);
                     Produto produto = produtoService.buscarProdutoPorId(idProduto);
-
                     itemPedido.add(ItemPedido
                             .builder()
                             .id(id)
@@ -79,7 +78,7 @@ public class ItemPedidoService {
                     int idProduto = rs.getInt("idProduto");
                     int quantidade = rs.getInt("quantidade");
 
-                    ProdutoService produtoService = new ProdutoService(CriaConexao.getConexao());
+                    ProdutoService produtoService = new ProdutoService(connection);
                     Produto produto = produtoService.buscarProdutoPorId(idProduto);
 
                     itemPedido.add( ItemPedido

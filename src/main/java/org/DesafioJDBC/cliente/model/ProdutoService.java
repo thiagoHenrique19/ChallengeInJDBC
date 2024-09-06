@@ -30,14 +30,15 @@ public class ProdutoService {
             stmtPedido.executeUpdate();
         }
     }
-    public void receiverProdutcInfo(Scanner terminal) throws SQLException {
+    public void receiverProdutcInfo() throws SQLException {
+        Scanner terminal = new Scanner(System.in);
+
         System.out.println("-------------------------------");
         System.out.println("Deseja inserir um produto?");
         System.out.println("Informe o nome do produto: ");
-        String nomeProduto = terminal.next();
+        String nomeProduto = terminal.nextLine();
         System.out.println("Informe o valor: ");
         float valorProduto = terminal.nextFloat();
-
 
         Produto produto = Produto
                 .builder().
@@ -46,11 +47,7 @@ public class ProdutoService {
                 build();
 
         insertProduto(produto);
-        if (produto != null) {
-            System.out.println("Cadastro realizado com sucesso");
-        } else {
-            System.out.println("Não foi possível realizar o cadastro");
-        }
+        System.out.println("Cadastro realizado com sucesso");
     }
     public List<Produto> getAllProdutos() throws SQLException {
         List<Produto> produtos = new ArrayList<>();

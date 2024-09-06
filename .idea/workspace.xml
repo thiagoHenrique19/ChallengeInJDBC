@@ -5,28 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4dff7b31-6581-4ca4-8728-868a569dc420" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/CriarBanco.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ClienteService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ItemPedidoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/PedidoComItensService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/PedidoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ProdutoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/pedido/model/CriacaoPedido.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/pedido/view/ListarPedido.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/Cliente.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/ItemPedido.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/Pedido.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/Produto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/view/CriaConexao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/ListaPedidoTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Application.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ClienteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ClienteService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ItemPedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ItemPedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/PedidoComItensService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/PedidoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/PedidoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ProdutoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/ProdutoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/Cliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/ItemPedido.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/ItemPedido.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/Produto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/DesafioJDBC/produto/model/Produto.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,23 +41,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Application.executor&quot;: &quot;Run&quot;,
-    &quot;Application.CriacaoPedido.executor&quot;: &quot;Run&quot;,
-    &quot;Application.CriarBanco.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ListaPedidoTest.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.37126437&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Application.executor": "Run",
+    "Application.CriacaoPedido.executor": "Run",
+    "Application.CriarBanco.executor": "Run",
+    "Application.ListaPedidoTest.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.37126437",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.Application">
     <configuration name="Application" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Application" />
@@ -138,5 +126,20 @@
       <updated>1723808830944</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="java-line">
+          <url>jar://$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar!/lombok/Data.class</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/DesafioJDBC/cliente/model/PedidoService.java</url>
+          <line>248</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
